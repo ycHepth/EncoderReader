@@ -11,14 +11,17 @@
 
 class EncoderReader{
 public:
-    EncoderReader();
-    EncoderReader(float Ratio);
+    EncoderReader(int64_t base);
+    EncoderReader(int64_t base,float Ratio);
     ~EncoderReader() {};
 
-    std::bitset<32> getMultiData();
-    std::bitset<17> getSingleData();
+    std::bitset<17> getMultiData(); // [1 bit] sign + [16 bits] data
+    std::bitset<18> getSingleData();  // [1 bit] sign + [17 bits] data
+    std::bitset<32> getBaseData();
 
-    void read(int64_t cnt);
+    void read(int64_t cnt); // absolute data
+
+    void update(int64_t cnt); // increment data
 
     float getTotalRound();
     float getAngular();
@@ -27,20 +30,24 @@ public:
     float getOutputAngular();
 
 
+    float getIncRound();
+
+
 private:
+    float GearRatio;
+
+    int64_t BaseCnt;
+
     std::bitset<32> binaryCnt;
     std::bitset<17> singleBinary;
     std::bitset<32> multiBinary;
-    float motorRound;
-    float motorAngular;
+    float _motorRound;
+    float _motorAngular;
 
-    float outputRound;
-    float outputAngular;
+    float _outputRound;
+    float _outputAngular;
 
-    float GearRatio;
-
-    std::bitset<32> BaseBinary; // reference for incremental value
-
+    bool sign = true; // default is positive
 };
 
 #endif //ENCODERREADER_ENCODERREADER_H
